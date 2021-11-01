@@ -26,68 +26,55 @@ public class EmailAccountMaker {
     private String email;
     private int mailBoxCapacity;
 
+    private Scanner input = new Scanner(System.in);
+
     //Constructor to receive the first name and last name
-    public EmailAccountMaker(String firstName, String lastName) {
+    public EmailAccountMaker() {
+        input = new Scanner(System.in);
+    }
 
-        this.firstName = toLowerCase(replaceSpaceByDash(firstName));
-        this.lastName = toLowerCase(replaceSpaceByDash(lastName));
-
-        print("Person name:" + this.firstName + " " + this.lastName);
-
-        // Set the choosing department
-        this.department = getChosenDepartment();
-        print("DEPARTMENT:"+department);
-
-        //Set a random password
-        this.password = getRandomTemporaryPassword();
-        print("PASSWORD:"+password);
-
-        // Set an Email based on first name, last name and chosen department
-        this.email = getEmail();
-        print("EMAIL:"+email);
-
-        // Set MailBox Capacity
-        this.mailBoxCapacity = getMailBoxCapacity();
-        print("MAILBOX CAPACITY:"+mailBoxCapacity);
-
-        // Set Alternate Email
-        this.alternateEmail = getAlternateEmail();
-        print("Alternate Email:"+alternateEmail);
-
-        // Set New Password
-
+    public void setFirstNameAndLastNameAndAlternateEmail() {
+        EmailAccountMakerPrinter.messageToEnterFirstName();
+        this.firstName = toLowerCase(replaceSpaceByDash(getInputString()));
+        EmailAccountMakerPrinter.messageToEnterLastName();
+        this.lastName = toLowerCase(replaceSpaceByDash(getInputString()));
+        EmailAccountMakerPrinter.messageToEnterAlternateEmail();
+        this.alternateEmail = getInputString();
+        EmailAccountMakerPrinter.recapForFirstNameAndLastNameAndAlternateEmail(firstName, lastName, alternateEmail);
 
     }
 
-
-
     //Ask fot the department
-    private String getChosenDepartment() {
-        print(EmailAccountMakerPrinter.messageToChooseADepartment());
-        Scanner in = new Scanner(System.in);
-        int departmentChoice = in.nextInt();
+    public void setDepartment() {
+        EmailAccountMakerPrinter.messageToChooseADepartment();
+        this.department = EMPTY_STRING;
+        int departmentChoice = getInputInteger();
 
         switch (departmentChoice) {
             case SALES_DEPARTMENT_CODE:
-                return toLowerCase(Departments.SALES.name());
+                this.department = toLowerCase(Departments.SALES.name());
+                break;
             case DEVELOPMENT_DEPARTMENT_CODE:
-                return toLowerCase(Departments.DEVELOPMENT.name());
+                this.department = toLowerCase(Departments.DEVELOPMENT.name());
+                break;
             case ACCOUNTING_DEPARTMENT_CODE:
-                return toLowerCase(Departments.ACCOUNTING.name());
+                this.department = toLowerCase(Departments.ACCOUNTING.name());
+                break;
         }
-        return EMPTY_STRING;
 
+        EmailAccountMakerPrinter.recapForDepartment(this.department);
+        closeInput();
     }
 
     //Generate a random password
-    private String getRandomTemporaryPassword() {
+    public void generateRandomTemporaryPassword() {
         char[] temporaryPassword = new char[PASSWORD_LENGTH];
-        int randomNumber = 0;
         for (int i = 0; i < PASSWORD_LENGTH; i++) {
-            randomNumber = getRandomNumberBetweenZeroAndLengthDictionary();
+            int randomNumber = getRandomNumberBetweenZeroAndLengthDictionary();
             temporaryPassword[i] = DICTIONARY.charAt(randomNumber);
         }
-        return toString(temporaryPassword);
+        this.password = toString(temporaryPassword);
+        EmailAccountMakerPrinter.recapForGeneratedPassword(this.password);
     }
 
     private int getRandomNumberBetweenZeroAndLengthDictionary() {
@@ -95,17 +82,19 @@ public class EmailAccountMaker {
     }
 
     //Generate the email
-    private String getEmail() {
-        StringBuilder email = new StringBuilder();
+    public void generateEmail() {
+        StringBuilder emailBuilder = new StringBuilder();
 
-        email.append(this.firstName)
+        emailBuilder.append(this.firstName)
                 .append(DOTE)
                 .append(this.lastName)
                 .append(AROBAS)
                 .append(setDepartmentInEmail())
                 .append(COMPANY_SUFFIX);
 
-        return email.toString();
+        this.email = emailBuilder.toString();
+        this.mailBoxCapacity = getMailBoxCapacity();
+        EmailAccountMakerPrinter.recapForGeneratedEmail(this.email, this.mailBoxCapacity);
     }
 
     private String setDepartmentInEmail() {
@@ -125,25 +114,11 @@ public class EmailAccountMaker {
             case ACCOUNTING_DEPARTMENT:
                 return MailBoxCapacity.ACCOUNTING.getCapacity();
         }
-        return 0;
+        return MailBoxCapacity.NONE.getCapacity();
     }
 
-    //Set and Get the alternate email
-    public String getAlternateEmail() {
-        return alternateEmail;
-    }
-    public void setAlternateEmail(String alternateEmail) {
-        this.alternateEmail = alternateEmail;
-    }
-
-
-    //Change the password
-    public void setNewPassword(String password) {
-        this.password = password;
-    }
-
-    private void print(Object message) {
-        EmailAccountMakerUtil.print(message.toString());
+    public void getRecap() {
+        EmailAccountMakerPrinter.summary();
     }
 
     private String toLowerCase(String ss) {
@@ -158,4 +133,16 @@ public class EmailAccountMaker {
         return EmailAccountMakerUtil.toString(chars);
     }
 
+    private int getInputInteger() {
+        return input.nextInt();
+    }
+
+    private String getInputString() {
+        input.useDelimiter("\n");
+        return input.nextLine();
+    }
+
+    private void closeInput() {
+        input.close();
+    }
 }

@@ -4,7 +4,8 @@ public enum MailBoxCapacity {
 
     SALES(600),
     DEVELOPMENT(400),
-    ACCOUNTING(800);
+    ACCOUNTING(800),
+    NONE(200);
 
     private int capacity;
 

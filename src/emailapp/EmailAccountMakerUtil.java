@@ -12,8 +12,8 @@ public class EmailAccountMakerUtil {
         return ss.toLowerCase(Locale.ROOT);
     }
 
-    public static String replaceSpaceByDash(String ss){
-        return ss.trim().replaceAll(REGEX_FOR_MANY_SPACE,LITTLE_SPACE).replace(LITTLE_SPACE, DASH);
+    public static String replaceSpaceByDash(String ss) {
+        return ss.trim().replaceAll(REGEX_FOR_MANY_SPACE, LITTLE_SPACE).replace(LITTLE_SPACE, DASH);
     }
 
 
